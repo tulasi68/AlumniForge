@@ -1,0 +1,118 @@
+// Simple mock data - replace with real API later
+
+export const alumni = [
+  {
+    id: "1",
+    name: "Priya Sharma",
+    batch: "2018",
+    department: "Computer Science",
+    city: "Bengaluru",
+    company: "Google",
+    role: "Software Engineer",
+    avatar: null,
+  },
+  {
+    id: "2",
+    name: "Arjun Patel",
+    batch: "2015",
+    department: "Mechanical Engineering",
+    city: "Pune",
+    company: "Tata Motors",
+    role: "Product Manager",
+    avatar: null,
+  },
+  {
+    id: "3",
+    name: "Sneha Reddy",
+    batch: "2020",
+    department: "Electrical Engineering",
+    city: "Hyderabad",
+    company: "Microsoft",
+    role: "SDE-2",
+    avatar: null,
+  },
+  {
+    id: "4",
+    name: "Rahul Menon",
+    batch: "2012",
+    department: "Civil Engineering",
+    city: "Chennai",
+    company: "L&T",
+    role: "Project Lead",
+    avatar: null,
+  },
+  {
+    id: "5",
+    name: "Ananya Iyer",
+    batch: "2019",
+    department: "Electronics",
+    city: "Bengaluru",
+    company: "Amazon",
+    role: "Data Scientist",
+    avatar: null,
+  },
+  {
+    id: "6",
+    name: "Vikram Singh",
+    batch: "2016",
+    department: "Computer Science",
+    city: "Delhi",
+    company: "Flipkart",
+    role: "Engineering Manager",
+    avatar: null,
+  },
+];
+
+export const events = [
+  {
+    id: "1",
+    title: "Bengaluru Chapter Meetup",
+    date: "2026-12-05",
+    time: "6:00 PM",
+    location: "Indiranagar, Bengaluru",
+    attendees: 42,
+    type: "Chapter",
+  },
+  {
+    id: "2",
+    title: "Alumni Career Talk - AI & Future",
+    date: "2026-12-12",
+    time: "7:30 PM",
+    location: "Online (Zoom)",
+    attendees: 128,
+    type: "Webinar",
+  },
+  {
+    id: "3",
+    title: "Batch of 2018 Reunion",
+    date: "2027-01-18",
+    time: "10:00 AM",
+    location: "Campus",
+    attendees: 85,
+    type: "Reunion",
+  },
+];
+
+export const posts = [
+  {
+    id: "1",
+    author: "Priya Sharma",
+    batch: "2018",
+    content: "Excited to share that I just joined Google as a Software Engineer! Happy to connect with fellow alumni in Bengaluru.",
+    time: "2 hours ago",
+  },
+  {
+    id: "2",
+    author: "Arjun Patel",
+    batch: "2015",
+    content: "Our chapter is organizing a networking dinner next month. Looking forward to meeting more of you!",
+    time: "5 hours ago",
+  },
+  {
+    id: "3",
+    author: "Alumni Office",
+    batch: "",
+    content: "New mentorship program launching next week. Senior alumni can register as mentors from the Opportunities section.",
+    time: "1 day ago",
+  },
+];
