@@ -6,7 +6,7 @@ import { Header } from "@/components/Header";
 import { EventCard } from "@/components/EventCard";
 import { ImagePicker } from "@/components/ImagePicker";
 import { getCurrentUser } from "@/lib/auth";
-import { getEvents, addEvent, getOpportunities, addOpportunity, type EventItem, type OpportunityCategory, type OpportunityItem } from "@/lib/store";
+import { getEvents, addEvent, deleteEvent, getOpportunities, addOpportunity, deleteOpportunity, type EventItem, type OpportunityCategory, type OpportunityItem } from "@/lib/store";
 
 type Section = "events" | OpportunityCategory;
 const sections: { id: Section; label: string }[] = [
@@ -45,6 +45,16 @@ export default function EventsPage() {
     () => opportunities.filter((item) => item.category === activeSection),
     [opportunities, activeSection]
   );
+
+  const handleDeleteEvent = (id: string) => {
+    if (!isAdmin || !window.confirm("Delete this event? This cannot be undone.")) return;
+    setEvents(deleteEvent(id));
+  };
+
+  const handleDeleteOpportunity = (id: string) => {
+    if (!isAdmin || !window.confirm("Delete this item? This cannot be undone.")) return;
+    setOpportunities(deleteOpportunity(id));
+  };
 
   const resetForm = () => {
     setTitle(""); setDate(""); setTime(""); setLocation(""); setType("Chapter");
@@ -132,10 +142,11 @@ export default function EventsPage() {
           {events.map((event) => <div key={event.id}>
             {event.image && <img src={event.image} alt="" className="h-36 w-full rounded-t-xl border border-b-0 border-slate-200 object-cover" />}
             <EventCard event={event} />
+            {isAdmin && <button type="button" onClick={() => handleDeleteEvent(event.id)} className="mt-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700">Delete event</button>}
           </div>)}
           {events.length === 0 && <EmptyState label="No events have been posted yet." />}
         </div> : <div className="space-y-3">
-          {visibleOpportunities.map((item) => <OpportunityCard key={item.id} item={item} />)}
+          {visibleOpportunities.map((item) => <OpportunityCard key={item.id} item={item} isAdmin={isAdmin} onDelete={handleDeleteOpportunity} />)}
           {visibleOpportunities.length === 0 && <EmptyState label={activeSection === "internship" ? "No achievements have been posted yet." : "No " + activeLabel.toLowerCase() + " have been posted yet."} />}
         </div>}
       </main>
@@ -147,7 +158,7 @@ function EmptyState({ label }: { label: string }) {
   return <div className="rounded-2xl border border-dashed border-sky-200 bg-sky-50/50 py-12 text-center text-sm text-slate-500">{label}</div>;
 }
 
-function OpportunityCard({ item }: { item: OpportunityItem }) {
+function OpportunityCard({ item, isAdmin, onDelete }: { item: OpportunityItem; isAdmin: boolean; onDelete: (id: string) => void }) {
   const categoryLabel = item.category === "jobs" ? "Opportunity" : item.category === "internship" ? "Achievement" : "Funding";
   return <article className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
     <div className="flex items-start justify-between gap-3">
@@ -159,5 +170,6 @@ function OpportunityCard({ item }: { item: OpportunityItem }) {
     {item.location && <p className="mt-2 text-xs text-slate-500">Location: {item.location}</p>}
     {item.deadline && <p className="mt-1 text-xs text-slate-500">Deadline: {new Date(item.deadline).toLocaleDateString()}</p>}
     {item.link && <a href={item.link} target="_blank" rel="noreferrer" className="mt-3 inline-flex rounded-lg bg-sky-100 px-3 py-2 text-sm font-semibold text-sky-950 hover:bg-sky-200">View details / Apply ↗</a>}
+    {isAdmin && <button type="button" onClick={() => onDelete(item.id)} className="mt-3 block rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700">Delete {categoryLabel.toLowerCase()}</button>}
   </article>;
 }
