@@ -104,3 +104,15 @@ export function loginAs(role: Role, name: string, email: string): User {
 export function logout() {
   setCurrentUser(null);
 }
+
+export function getUsers(): User[] {
+  return getSavedUsers();
+}
+
+export function deleteUser(userId: string): User[] {
+  const admin = getCurrentUser();
+  if (admin?.role !== "admin" || admin.id === userId) return getSavedUsers();
+  const remaining = getSavedUsers().filter((user) => user.id !== userId);
+  localStorage.setItem(USERS_KEY, JSON.stringify(remaining));
+  return remaining;
+}
