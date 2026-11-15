@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, Calendar, Heart, User } from "lucide-react";
+import { Home, Users, Calendar, Heart, User, GraduationCap } from "lucide-react";
 import clsx from "clsx";
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { href: "/events", label: "Events", icon: Calendar },
   { href: "/contribute", label: "Contribute", icon: Heart },
   { href: "/profile", label: "Profile", icon: User },
+  { href: "/mentoring", label: "Mentoring", icon: GraduationCap },
 ];
 
 export function BottomNav() {
