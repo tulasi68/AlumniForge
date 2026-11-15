@@ -4,18 +4,33 @@ import { useEffect, useState } from "react";
 import { institutionConfig } from "@/lib/config";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, getUsers, deleteUser, type User } from "@/lib/auth";
+import { getCurrentUser, getUsers, deleteUser, getPendingRegistrations, approveRegistration, rejectRegistration, type User, type RegistrationRequest } from "@/lib/auth";
 
 export default function AdminPage() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
+  const [pending, setPending] = useState<RegistrationRequest[]>([]);
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
     if (getCurrentUser()?.role !== "admin") { router.replace("/profile"); return; }
     setUsers(getUsers());
+    setPending(getPendingRegistrations());
     setAuthorized(true);
   }, [router]);
+
+  const handleApprove = (request: RegistrationRequest) => {
+    if (!authorized || !window.confirm("Approve this registration?")) return;
+    approveRegistration(request.id);
+    setPending(getPendingRegistrations());
+    setUsers(getUsers());
+  };
+
+  const handleReject = (request: RegistrationRequest) => {
+    if (!authorized || !window.confirm("Reject this registration request?")) return;
+    rejectRegistration(request.id);
+    setPending(getPendingRegistrations());
+  };
 
   const handleDeleteUser = (target: User) => {
     if (!authorized || !window.confirm(`Delete user ${target.name} (${target.email})? This cannot be undone.`)) return;
@@ -52,12 +67,34 @@ export default function AdminPage() {
             <div key={member.id} className="flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-slate-800">{member.name}</p>
-                <p className="truncate text-xs text-slate-500">{member.email} · {member.role}</p>
+                <p className="truncate text-xs text-slate-500">{member.phone || "No phone"} · {member.role}</p>
               </div>
               {member.id !== getCurrentUser()?.id && <button type="button" onClick={() => handleDeleteUser(member)} className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700">Delete user</button>}
             </div>
           ))}
           <p className="text-xs text-amber-700">Prototype limitation: these accounts are stored only in this browser, not in a shared college-wide user database.</p>
+        </section>
+
+        <section className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
+          <div>
+            <h2 className="font-semibold text-slate-800">Registration approvals</h2>
+            <p className="mt-1 text-sm text-slate-500">Review new alumni and student registration requests before granting access.</p>
+          </div>
+          {pending.length === 0 ? <p className="text-sm text-slate-400">There are no pending registration requests.</p> : pending.map((request) => (
+            <div key={request.id} className="border-t border-slate-100 pt-3 space-y-2">
+              <div>
+                <p className="font-medium text-sm text-slate-800">{request.name}</p>
+                <p className="text-xs text-slate-500">{request.phone} · Class of {request.batch}</p>
+                <p className="text-xs text-slate-500">{request.department} · Roll no. {request.rollNumber}</p>
+                <p className="text-xs text-slate-400">Requested {new Date(request.requestedAt).toLocaleString()}</p>
+              </div>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => handleApprove(request)} className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white">Approve</button>
+                <button type="button" onClick={() => handleReject(request)} className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700">Reject</button>
+              </div>
+            </div>
+          ))}
+          <p className="text-xs text-amber-700">Prototype limitation: requests are stored in this browser only. A shared database is required for real college-wide approvals.</p>
         </section>
 
         <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
