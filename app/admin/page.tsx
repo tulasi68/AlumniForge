@@ -33,7 +33,7 @@ export default function AdminPage() {
   };
 
   const handleDeleteUser = (target: User) => {
-    if (!authorized || !window.confirm(`Delete user ${target.name} (${target.email})? This cannot be undone.`)) return;
+    if (!authorized || !window.confirm(`Delete user ${target.name} (${target.phone})? This cannot be undone.`)) return;
     setUsers(deleteUser(target.id));
   };
 
@@ -68,6 +68,7 @@ export default function AdminPage() {
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-slate-800">{member.name}</p>
                 <p className="truncate text-xs text-slate-500">{member.phone || "No phone"} · {member.role}</p>
+                <p className="truncate text-xs text-slate-400">{member.batch ? "Class of " + member.batch : ""}{member.department ? " · " + member.department : ""}{member.rollNumber ? " · " + member.rollNumber : ""}</p>
               </div>
               {member.id !== getCurrentUser()?.id && <button type="button" onClick={() => handleDeleteUser(member)} className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700">Delete user</button>}
             </div>
