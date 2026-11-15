@@ -123,7 +123,7 @@ export default function ProfilePage() {
                 {user.role === "admin" ? "College Admin" : `Class of ${user.batch || "—"}`}
                 {user.department ? ` · ${user.department}` : ""}
               </p>
-              <p className="text-slate-400 text-sm">{user.email}</p>
+              {user.email && <p className="text-slate-400 text-sm">{user.email}</p>}
             </>
           )}
         </div>
@@ -171,7 +171,7 @@ export default function ProfilePage() {
 
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1">Phone Number</label>
-                <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="e.g. +91 98765 43210" className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input type="tel" value={phone} disabled placeholder="Registered phone number" className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-500" />
                 <p className="text-xs text-slate-400 mt-1">Shown in the mentoring directory when you opt in.</p>
               </div>
 
