@@ -5,10 +5,21 @@ import { useRouter } from "next/navigation";
 import { institutionConfig } from "@/lib/config";
 import { getCurrentUser, logout, type User } from "@/lib/auth";
 import Link from "next/link";
+import { Bell, Menu, X } from "lucide-react";
+
+const menuLinks = [
+  { href: "/", label: "Home" },
+  { href: "/network", label: "Alumni directory" },
+  { href: "/events", label: "Events" },
+  { href: "/mentoring", label: "Mentorship" },
+  { href: "/contribute", label: "Fundraising" },
+  { href: "/profile", label: "My profile" },
+];
 
 export function Header({ title, showBack = false }: { title?: string; showBack?: boolean }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setUser(getCurrentUser());
@@ -21,34 +32,31 @@ export function Header({ title, showBack = false }: { title?: string; showBack?:
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 px-4 h-14 flex items-center justify-between">
-      <div className="flex items-center gap-3 min-w-0">
-        {showBack ? (
-          <Link href="/" className="text-slate-600 text-sm font-medium shrink-0">
-            ← Back
-          </Link>
-        ) : (
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-sky-200 flex items-center justify-center text-sky-950 font-bold text-sm shrink-0">
-              {institutionConfig.shortName}
-            </div>
-            <span className="font-semibold text-slate-800 truncate">{institutionConfig.name}</span>
-          </div>
-        )}
-      </div>
-      {title && <h1 className="text-base font-semibold text-slate-800 absolute left-1/2 -translate-x-1/2 pointer-events-none">{title}</h1>}
-      <div className="flex items-center justify-end min-w-[64px]">
-        {user && (
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="text-xs sm:text-sm font-medium text-sky-900 border border-sky-200 rounded-lg px-2.5 py-1.5 hover:bg-sky-50 transition"
-            aria-label="Log out"
-          >
-            Logout
+    <>
+      <header className="site-header">
+        <button type="button" className="header-icon-button" aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((open) => !open)}>
+          {menuOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+        <Link href="/" className="brand-lockup">
+          <span className="brand-mark">{institutionConfig.shortName}</span>
+          <span className="brand-name">{institutionConfig.name}</span>
+        </Link>
+        {title && <span className="header-page-title">{title}</span>}
+        <div className="header-right">
+          <button type="button" className="header-icon-button notification-button" aria-label="Notifications" title="Notifications">
+            <Bell size={21} />
           </button>
-        )}
-      </div>
-    </header>
+          {user && <button type="button" onClick={handleLogout} className="logout-button">Logout</button>}
+        </div>
+      </header>
+      {menuOpen && (
+        <div className="menu-backdrop" onClick={() => setMenuOpen(false)}>
+          <nav className="site-drawer" onClick={(event) => event.stopPropagation()}>
+            <div className="drawer-heading"><strong>{institutionConfig.name}</strong><button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu"><X size={20} /></button></div>
+            {menuLinks.map((item) => <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</Link>)}
+          </nav>
+        </div>
+      )}
+    </>
   );
 }
