@@ -323,6 +323,10 @@ export default function ProfilePage() {
                   <p className="text-slate-800 font-medium">{user.department || "—"}</p>
                 </div>
                 <div>
+                  <p className="text-xs text-slate-400">Roll Number</p>
+                  <p className="text-slate-800 font-medium">{user.rollNumber || "—"}</p>
+                </div>
+                <div>
                   <p className="text-xs text-slate-400">College</p>
                   <p className="text-slate-800 font-medium">{user.college || "—"}</p>
                 </div>
