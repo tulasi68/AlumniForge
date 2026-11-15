@@ -1,10 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { institutionConfig } from "@/lib/config";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getCurrentUser, getUsers, deleteUser, type User } from "@/lib/auth";
 
 export default function AdminPage() {
+  const router = useRouter();
+  const [users, setUsers] = useState<User[]>([]);
+  const [authorized, setAuthorized] = useState(false);
+
+  useEffect(() => {
+    if (getCurrentUser()?.role !== "admin") { router.replace("/profile"); return; }
+    setUsers(getUsers());
+    setAuthorized(true);
+  }, [router]);
+
+  const handleDeleteUser = (target: User) => {
+    if (!authorized || !window.confirm(`Delete user ${target.name} (${target.email})? This cannot be undone.`)) return;
+    setUsers(deleteUser(target.id));
+  };
+
   const [name, setName] = useState(institutionConfig.name);
   const [tagline, setTagline] = useState(institutionConfig.tagline);
   const [modules, setModules] = useState(institutionConfig.modules);
@@ -12,6 +29,8 @@ export default function AdminPage() {
   const toggleModule = (key: keyof typeof modules) => {
     setModules((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  if (!authorized) return <div className="min-h-screen flex items-center justify-center text-slate-500 text-sm">Checking administrator access...</div>;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -24,6 +43,23 @@ export default function AdminPage() {
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
+        <section className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
+          <div>
+            <h2 className="font-semibold text-slate-800">User Management</h2>
+            <p className="mt-1 text-sm text-slate-500">Review registered demo users and remove accounts when necessary.</p>
+          </div>
+          {users.length === 0 ? <p className="text-sm text-slate-400">No saved user profiles are available in this browser.</p> : users.map((member) => (
+            <div key={member.id} className="flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-slate-800">{member.name}</p>
+                <p className="truncate text-xs text-slate-500">{member.email} · {member.role}</p>
+              </div>
+              {member.id !== getCurrentUser()?.id && <button type="button" onClick={() => handleDeleteUser(member)} className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700">Delete user</button>}
+            </div>
+          ))}
+          <p className="text-xs text-amber-700">Prototype limitation: these accounts are stored only in this browser, not in a shared college-wide user database.</p>
+        </section>
+
         <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
           <h2 className="font-semibold text-slate-800">Branding</h2>
 
