@@ -179,8 +179,16 @@ export function deleteCampaign(campaignId: string): Campaign[] {
 
 export function addCampaign(campaign: Omit<Campaign, "id" | "raised" | "donors">) {
   const campaigns = getCampaigns();
+  if (getCurrentUser()?.role !== "admin") return campaigns;
+
+  const goal = Number(campaign.goal);
+  if (!campaign.title.trim() || !campaign.description.trim() || !Number.isFinite(goal) || goal <= 0) {
+    return campaigns;
+  }
+
   const newCampaign: Campaign = {
     ...campaign,
+    goal,
     id: Date.now().toString(),
     raised: 0,
     donors: 0,
