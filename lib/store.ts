@@ -11,6 +11,16 @@ export type Post = {
   content: string;
   time: string;
   image?: string | null;
+  reactions?: string[];
+  comments?: PostComment[];
+};
+
+export type PostComment = {
+  id: string;
+  authorId: string;
+  author: string;
+  content: string;
+  time: string;
 };
 
 export type EventItem = {
@@ -54,7 +64,49 @@ function save<T>(key: string, data: T[]) {
 }
 
 export function getPosts(): Post[] {
-  return load(POSTS_KEY, seedPosts);
+  return load<Post>(POSTS_KEY, seedPosts).map((post) => ({
+    ...post,
+    reactions: Array.isArray(post.reactions) ? post.reactions : [],
+    comments: Array.isArray(post.comments) ? post.comments : [],
+  }));
+}
+
+export function togglePostReaction(postId: string, userId: string): Post[] {
+  const posts = getPosts().map((post) => {
+    if (post.id !== postId) return post;
+    const reactions = post.reactions || [];
+    return {
+      ...post,
+      reactions: reactions.includes(userId)
+        ? reactions.filter((id) => id !== userId)
+        : [...reactions, userId],
+    };
+  });
+  save(POSTS_KEY, posts);
+  return posts;
+}
+
+export function addPostComment(postId: string, comment: Omit<PostComment, "id" | "time">): Post[] {
+  const posts = getPosts().map((post) => post.id === postId
+    ? {
+        ...post,
+        comments: [...(post.comments || []), {
+          ...comment,
+          id: Date.now().toString(),
+          time: new Date().toLocaleString(),
+        }],
+      }
+    : post
+  );
+  save(POSTS_KEY, posts);
+  return posts;
+}
+
+export function deletePost(postId: string): Post[] {
+  if (getCurrentUser()?.role !== "admin") return getPosts();
+  const posts = getPosts().filter((post) => post.id !== postId);
+  save(POSTS_KEY, posts);
+  return posts;
 }
 
 export function addPost(post: Omit<Post, "id" | "time">) {
@@ -63,6 +115,8 @@ export function addPost(post: Omit<Post, "id" | "time">) {
     ...post,
     id: Date.now().toString(),
     time: "Just now",
+    reactions: [],
+    comments: [],
   };
   const updated = [newPost, ...posts];
   save(POSTS_KEY, updated);
