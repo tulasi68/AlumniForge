@@ -17,6 +17,7 @@ export default function ProfilePage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
+  const [formError, setFormError] = useState("");
   const [batch, setBatch] = useState("");
   const [department, setDepartment] = useState("");
   const [college, setCollege] = useState("");
@@ -45,6 +46,11 @@ export default function ProfilePage() {
   }, [router]);
 
   const handleSave = () => {
+    if ((offerMentorship || seekMentorship) && !phone.trim()) {
+      setFormError("Add a phone number to join the mentoring directory.");
+      return;
+    }
+    setFormError("");
     const updated = updateCurrentUser({
       name: name.trim(),
       phone: phone.trim(),
@@ -250,6 +256,7 @@ export default function ProfilePage() {
               </label>
             </div>
 
+            {formError && <p role="alert" className="text-sm text-red-600">{formError}</p>}
             <div className="flex gap-2">
               <button
                 type="button"
