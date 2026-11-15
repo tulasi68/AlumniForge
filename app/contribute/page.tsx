@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { ImagePicker } from "@/components/ImagePicker";
 import { getCurrentUser } from "@/lib/auth";
-import { getCampaigns, addCampaign, type Campaign } from "@/lib/store";
+import { getCampaigns, addCampaign, deleteCampaign, type Campaign } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 
@@ -52,6 +52,11 @@ export default function ContributePage() {
     setGoal("");
     setImage(null);
     setShowForm(false);
+  };
+
+  const handleDeleteCampaign = (id: string) => {
+    if (!isAdmin || !window.confirm("Delete this funding campaign? This cannot be undone.")) return;
+    setCampaigns(deleteCampaign(id));
   };
 
   const handlePay = () => {
@@ -173,6 +178,7 @@ export default function ContributePage() {
                       </p>
                     </div>
 
+                    {isAdmin && <button type="button" onClick={() => handleDeleteCampaign(campaign.id)} className="mt-3 w-full rounded-xl border border-red-200 py-2 text-sm font-medium text-red-700">Delete campaign</button>}
                     <button
                       type="button"
                       onClick={() => setSelectedCampaign(campaign)}
