@@ -17,27 +17,34 @@ export default function HomePage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-4 gap-2">
           <Link
             href="/network"
             className="bg-white border border-slate-200 rounded-xl p-3 text-center hover:border-blue-300 transition"
           >
-            <div className="text-2xl mb-1">👥</div>
-            <div className="text-xs font-medium text-slate-700">Find Alumni</div>
+            <div className="text-xl mb-1">👥</div>
+            <div className="text-xs font-medium text-slate-700">Network</div>
           </Link>
           <Link
             href="/events"
             className="bg-white border border-slate-200 rounded-xl p-3 text-center hover:border-blue-300 transition"
           >
-            <div className="text-2xl mb-1">📅</div>
+            <div className="text-xl mb-1">📅</div>
             <div className="text-xs font-medium text-slate-700">Events</div>
+          </Link>
+          <Link
+            href="/contribute"
+            className="bg-white border border-rose-200 rounded-xl p-3 text-center hover:border-rose-300 transition"
+          >
+            <div className="text-xl mb-1">❤️</div>
+            <div className="text-xs font-medium text-rose-600">Contribute</div>
           </Link>
           <Link
             href="/profile"
             className="bg-white border border-slate-200 rounded-xl p-3 text-center hover:border-blue-300 transition"
           >
-            <div className="text-2xl mb-1">👤</div>
-            <div className="text-xs font-medium text-slate-700">My Profile</div>
+            <div className="text-xl mb-1">👤</div>
+            <div className="text-xs font-medium text-slate-700">Profile</div>
           </Link>
         </div>
 

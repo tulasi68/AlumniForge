@@ -11,6 +11,7 @@ export const institutionConfig = {
     home: true,
     network: true,
     events: true,
+    contribute: true,
     opportunities: true,
     profile: true,
     admin: true,
