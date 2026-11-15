@@ -168,3 +168,14 @@ export function upsertMentorshipProfile(user: {
   save(MENTORSHIP_KEY, profiles);
   return profiles;
 }
+
+
+export type OpportunityCategory = "jobs" | "internship" | "funding";
+export type OpportunityItem = { id: string; category: OpportunityCategory; title: string; organization: string; description: string; location: string; link: string; deadline: string; createdAt: string; };
+const OPPORTUNITIES_KEY = "alumniforge_opportunities";
+export function getOpportunities(): OpportunityItem[] { return load(OPPORTUNITIES_KEY, []); }
+export function addOpportunity(item: Omit<OpportunityItem, "id" | "createdAt">): OpportunityItem[] {
+  const items = getOpportunities();
+  const next: OpportunityItem = { ...item, id: Date.now().toString(), createdAt: new Date().toISOString() };
+  const updated = [next, ...items]; save(OPPORTUNITIES_KEY, updated); return updated;
+}
