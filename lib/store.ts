@@ -118,3 +118,53 @@ export function addCampaign(campaign: Omit<Campaign, "id" | "raised" | "donors">
   save(CAMPAIGNS_KEY, updated);
   return updated;
 }
+
+export type MentorshipProfile = {
+  id: string;
+  name: string;
+  batch: string;
+  department: string;
+  college: string;
+  company: string;
+  phone: string;
+  photo?: string | null;
+  offerMentorship: boolean;
+  seekMentorship: boolean;
+};
+
+const MENTORSHIP_KEY = "alumniforge_mentorship_profiles";
+
+export function getMentorshipProfiles(): MentorshipProfile[] {
+  return load(MENTORSHIP_KEY, []);
+}
+
+export function upsertMentorshipProfile(user: {
+  id: string;
+  name: string;
+  batch?: string;
+  department?: string;
+  college?: string;
+  company?: string;
+  phone?: string;
+  photo?: string | null;
+  offerMentorship?: boolean;
+  seekMentorship?: boolean;
+}) {
+  const profiles = getMentorshipProfiles().filter((profile) => profile.id !== user.id);
+  if (user.offerMentorship || user.seekMentorship) {
+    profiles.unshift({
+      id: user.id,
+      name: user.name,
+      batch: user.batch || "",
+      department: user.department || "",
+      college: user.college || "",
+      company: user.company || "",
+      phone: user.phone || "",
+      photo: user.photo || null,
+      offerMentorship: Boolean(user.offerMentorship),
+      seekMentorship: Boolean(user.seekMentorship),
+    });
+  }
+  save(MENTORSHIP_KEY, profiles);
+  return profiles;
+}
