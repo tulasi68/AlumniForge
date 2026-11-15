@@ -128,14 +128,6 @@ export default function HomePage() {
           <Sparkles size={28} aria-hidden="true" />
         </section>
 
-        <section className="registration-strip">
-          <div>
-            <p className="registration-kicker">Your alumni community is waiting</p>
-            <p className="registration-copy">Complete your profile and reconnect with your batch.</p>
-          </div>
-          <Link href="/profile" className="register-button">Complete profile</Link>
-        </section>
-
         <section className="composer-card" aria-label="Create a community post">
           <div className="composer-top">
             <div className="avatar-initials">{user.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}</div>
