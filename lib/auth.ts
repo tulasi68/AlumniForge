@@ -6,6 +6,8 @@ export type User = {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  photo?: string | null;
   role: Role;
   batch?: string;          // Class / Year
   department?: string;     // Branch
