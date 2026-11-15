@@ -156,3 +156,43 @@ body {
 .to-blue-700 { --tw-gradient-to: #7c3aed var(--tw-gradient-to-position) !important; }
 .focus\\:ring-blue-500:focus { --tw-ring-color: #818cf8 !important; }
 .focus\\:ring-blue-200:focus { --tw-ring-color: #c7d2fe !important; }
+
+/* Community post engagement */
+.post-interactions {
+  display:flex; align-items:center; flex-wrap:wrap; gap:16px;
+  padding:12px 0 10px; margin-top:10px; border-top:1px solid #eef0f7;
+}
+.post-reaction,.post-comment-count,.post-delete-button {
+  display:inline-flex; align-items:center; gap:6px; border:0; background:transparent;
+  color:#64708a; font-size:12px; font-weight:650; cursor:pointer;
+}
+.post-reaction-active { color:#4f46e5; }
+.post-reaction-active svg { fill:#e0e7ff; }
+.post-count { color:#8a91a5; font-variant-numeric:tabular-nums; }
+.post-delete-button { margin-left:auto; color:#dc2626; }
+.post-comments { display:grid; gap:10px; padding:4px 0 12px; }
+.post-comment { display:flex; align-items:flex-start; gap:9px; }
+.post-comment-avatar {
+  flex:0 0 30px; width:30px; height:30px; display:grid; place-items:center;
+  border-radius:50%; background:#e0e7ff; color:#4338ca; font-size:10px; font-weight:750;
+}
+.post-comment-body {
+  flex:1; min-width:0; border-radius:12px; background:#f7f8ff; padding:9px 11px;
+  color:#39415b; font-size:12px; line-height:1.5;
+}
+.post-comment-author { margin:0 0 3px; color:#272d45; font-weight:750; }
+.post-comment-author span { margin-left:6px; color:#9299aa; font-size:10px; font-weight:450; }
+.post-comment-body p:last-child { margin:0; overflow-wrap:anywhere; }
+.post-comment-form {
+  display:flex; align-items:center; gap:8px; margin-top:4px; padding:5px 6px 5px 12px;
+  border:1px solid #e2e6f2; border-radius:999px; background:#fff;
+}
+.post-comment-form input {
+  flex:1; min-width:0; border:0; outline:0; background:transparent;
+  color:#30364d; font-size:12px; padding:7px 0;
+}
+.post-comment-form button {
+  display:grid; place-items:center; width:32px; height:32px; flex:0 0 32px;
+  border:0; border-radius:50%; background:#4f46e5; color:#fff; cursor:pointer;
+}
+.post-comment-form button:disabled { background:#c7cbea; cursor:not-allowed; }
