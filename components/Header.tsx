@@ -41,7 +41,6 @@ export function Header({ title, showBack = false }: { title?: string; showBack?:
           <span className="brand-mark">{institutionConfig.shortName}</span>
           <span className="brand-name">{institutionConfig.name}</span>
         </Link>
-        {title && <span className="header-page-title">{title}</span>}
         <div className="header-right">
           <button type="button" className="header-icon-button notification-button" aria-label="Notifications" title="Notifications">
             <Bell size={21} />
