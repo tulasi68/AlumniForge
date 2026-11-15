@@ -127,6 +127,13 @@ export function getEvents(): EventItem[] {
   return load(EVENTS_KEY, seedEvents);
 }
 
+export function deleteEvent(eventId: string): EventItem[] {
+  if (getCurrentUser()?.role !== "admin") return getEvents();
+  const updated = getEvents().filter((event) => event.id !== eventId);
+  save(EVENTS_KEY, updated);
+  return updated;
+}
+
 export function addEvent(event: Omit<EventItem, "id" | "attendees">) {
   const events = getEvents();
   if (getCurrentUser()?.role !== "admin") return events;
@@ -161,6 +168,13 @@ const defaultCampaigns: Campaign[] = [
 
 export function getCampaigns(): Campaign[] {
   return load(CAMPAIGNS_KEY, defaultCampaigns);
+}
+
+export function deleteCampaign(campaignId: string): Campaign[] {
+  if (getCurrentUser()?.role !== "admin") return getCampaigns();
+  const updated = getCampaigns().filter((campaign) => campaign.id !== campaignId);
+  save(CAMPAIGNS_KEY, updated);
+  return updated;
 }
 
 export function addCampaign(campaign: Omit<Campaign, "id" | "raised" | "donors">) {
@@ -231,6 +245,12 @@ export type OpportunityCategory = "jobs" | "internship" | "funding";
 export type OpportunityItem = { id: string; category: OpportunityCategory; title: string; organization: string; description: string; location: string; link: string; deadline: string; createdAt: string; };
 const OPPORTUNITIES_KEY = "alumniforge_opportunities";
 export function getOpportunities(): OpportunityItem[] { return load(OPPORTUNITIES_KEY, []); }
+export function deleteOpportunity(itemId: string): OpportunityItem[] {
+  if (getCurrentUser()?.role !== "admin") return getOpportunities();
+  const updated = getOpportunities().filter((item) => item.id !== itemId);
+  save(OPPORTUNITIES_KEY, updated);
+  return updated;
+}
 export function addOpportunity(item: Omit<OpportunityItem, "id" | "createdAt">): OpportunityItem[] {
   const items = getOpportunities();
   if (getCurrentUser()?.role !== "admin") return items;
