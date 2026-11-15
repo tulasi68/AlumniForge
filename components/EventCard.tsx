@@ -15,9 +15,9 @@ export function EventCard({ event }: { event: Event }) {
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-4 flex gap-4">
-      <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-blue-50 flex flex-col items-center justify-center">
-        <span className="text-xs font-medium text-blue-600 uppercase">{month}</span>
-        <span className="text-lg font-bold text-blue-700 leading-none">{day}</span>
+      <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-sky-100 flex flex-col items-center justify-center">
+        <span className="text-xs font-medium text-sky-800 uppercase">{month}</span>
+        <span className="text-lg font-bold text-sky-950 leading-none">{day}</span>
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
