@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { EventCard } from "@/components/EventCard";
+import { ImagePicker } from "@/components/ImagePicker";
 import { institutionConfig } from "@/lib/config";
 import { getCurrentUser } from "@/lib/auth";
 import { getPosts, addPost, getEvents, type Post } from "@/lib/store";
@@ -15,6 +16,7 @@ export default function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [events, setEvents] = useState<ReturnType<typeof getEvents>>([]);
   const [newPost, setNewPost] = useState("");
+  const [postImage, setPostImage] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
@@ -34,9 +36,11 @@ export default function HomePage() {
       author: user.name,
       batch: user.batch || "",
       content: newPost.trim(),
+      image: postImage,
     });
     setPosts(updated);
     setNewPost("");
+    setPostImage(null);
     setShowForm(false);
   };
 
@@ -101,6 +105,7 @@ export default function HomePage() {
                 rows={3}
                 className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
+              <ImagePicker value={postImage} onChange={setPostImage} />
               <button
                 type="button"
                 onClick={handleCreatePost}
@@ -114,24 +119,30 @@ export default function HomePage() {
 
           <div className="space-y-3">
             {posts.map((post) => (
-              <div key={post.id} className="bg-white rounded-xl border border-slate-200 p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-slate-600">
-                    {post.author
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .slice(0, 2)}
+              <div key={post.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                {post.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={post.image} alt="" className="w-full h-48 object-cover" />
+                )}
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-slate-600">
+                      {post.author
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .slice(0, 2)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">{post.author}</p>
+                      <p className="text-xs text-slate-400">
+                        {post.batch ? `Class of ${post.batch} · ` : ""}
+                        {post.time}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-800">{post.author}</p>
-                    <p className="text-xs text-slate-400">
-                      {post.batch ? `Class of ${post.batch} · ` : ""}
-                      {post.time}
-                    </p>
-                  </div>
+                  <p className="text-sm text-slate-700 leading-relaxed">{post.content}</p>
                 </div>
-                <p className="text-sm text-slate-700 leading-relaxed">{post.content}</p>
               </div>
             ))}
           </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { EventCard } from "@/components/EventCard";
+import { ImagePicker } from "@/components/ImagePicker";
 import { getCurrentUser } from "@/lib/auth";
 import { getEvents, addEvent, type EventItem } from "@/lib/store";
 import { useRouter } from "next/navigation";
@@ -17,6 +18,7 @@ export default function EventsPage() {
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [type, setType] = useState("Chapter");
+  const [image, setImage] = useState<string | null>(null);
 
   useEffect(() => {
     const u = getCurrentUser();
@@ -36,6 +38,7 @@ export default function EventsPage() {
       time,
       location: location.trim(),
       type,
+      image,
     });
     setEvents(updated);
     setTitle("");
@@ -43,6 +46,7 @@ export default function EventsPage() {
     setTime("");
     setLocation("");
     setType("Chapter");
+    setImage(null);
     setShowForm(false);
   };
 
@@ -112,6 +116,7 @@ export default function EventsPage() {
                   <option value="Webinar">Webinar</option>
                   <option value="Workshop">Workshop</option>
                 </select>
+                <ImagePicker value={image} onChange={setImage} />
                 <button
                   type="button"
                   onClick={handleCreate}
@@ -126,7 +131,17 @@ export default function EventsPage() {
 
         <div className="space-y-3">
           {events.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <div key={event.id}>
+              {event.image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={event.image}
+                  alt=""
+                  className="w-full h-36 object-cover rounded-t-xl border border-b-0 border-slate-200"
+                />
+              )}
+              <EventCard event={event} />
+            </div>
           ))}
           {events.length === 0 && (
             <div className="text-center py-12 text-slate-400 text-sm">No events yet</div>

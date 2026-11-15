@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
+import { ImagePicker } from "@/components/ImagePicker";
 import { getCurrentUser } from "@/lib/auth";
 import { getCampaigns, addCampaign, type Campaign } from "@/lib/store";
 import { useRouter } from "next/navigation";
@@ -23,6 +24,7 @@ export default function ContributePage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [goal, setGoal] = useState("");
+  const [image, setImage] = useState<string | null>(null);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [amount, setAmount] = useState("");
 
@@ -42,11 +44,13 @@ export default function ContributePage() {
       title: title.trim(),
       description: description.trim(),
       goal: Number(goal),
+      image,
     });
     setCampaigns(updated);
     setTitle("");
     setDescription("");
     setGoal("");
+    setImage(null);
     setShowForm(false);
   };
 
@@ -117,6 +121,7 @@ export default function ContributePage() {
                   onChange={(e) => setGoal(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
                 />
+                <ImagePicker value={image} onChange={setImage} />
                 <button
                   type="button"
                   onClick={handleCreateCampaign}
@@ -139,37 +144,43 @@ export default function ContributePage() {
               );
 
               return (
-                <div key={campaign.id} className="bg-white rounded-xl border border-slate-200 p-4">
-                  <h3 className="font-semibold text-slate-900">{campaign.title}</h3>
-                  <p className="text-sm text-slate-600 mt-1 leading-relaxed">
-                    {campaign.description}
-                  </p>
-
-                  <div className="mt-4">
-                    <div className="flex justify-between text-sm mb-1.5">
-                      <span className="font-medium text-slate-800">
-                        {formatINR(campaign.raised)}
-                      </span>
-                      <span className="text-slate-500">of {formatINR(campaign.goal)}</span>
-                    </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-rose-500 rounded-full"
-                        style={{ width: `${percent}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-slate-400 mt-1.5">
-                      {campaign.donors} alumni have contributed
+                <div key={campaign.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                  {campaign.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={campaign.image} alt="" className="w-full h-36 object-cover" />
+                  )}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-slate-900">{campaign.title}</h3>
+                    <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                      {campaign.description}
                     </p>
-                  </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setSelectedCampaign(campaign)}
-                    className="mt-4 w-full py-2.5 rounded-xl bg-rose-500 text-white text-sm font-medium hover:bg-rose-600 transition"
-                  >
-                    Contribute Now
-                  </button>
+                    <div className="mt-4">
+                      <div className="flex justify-between text-sm mb-1.5">
+                        <span className="font-medium text-slate-800">
+                          {formatINR(campaign.raised)}
+                        </span>
+                        <span className="text-slate-500">of {formatINR(campaign.goal)}</span>
+                      </div>
+                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-rose-500 rounded-full"
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1.5">
+                        {campaign.donors} alumni have contributed
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCampaign(campaign)}
+                      className="mt-4 w-full py-2.5 rounded-xl bg-rose-500 text-white text-sm font-medium hover:bg-rose-600 transition"
+                    >
+                      Contribute Now
+                    </button>
+                  </div>
                 </div>
               );
             })}

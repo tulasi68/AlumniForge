@@ -8,6 +8,7 @@ export type Post = {
   batch: string;
   content: string;
   time: string;
+  image?: string | null;
 };
 
 export type EventItem = {
@@ -18,6 +19,7 @@ export type EventItem = {
   location: string;
   attendees: number;
   type: string;
+  image?: string | null;
 };
 
 export type Campaign = {
@@ -27,6 +29,7 @@ export type Campaign = {
   raised: number;
   goal: number;
   donors: number;
+  image?: string | null;
 };
 
 const POSTS_KEY = "alumniforge_posts";
