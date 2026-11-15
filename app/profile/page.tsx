@@ -18,6 +18,7 @@ export default function ProfilePage() {
   const [phone, setPhone] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
   const [batch, setBatch] = useState("");
   const [department, setDepartment] = useState("");
   const [college, setCollege] = useState("");
@@ -48,25 +49,40 @@ export default function ProfilePage() {
   const handleSave = () => {
     if ((offerMentorship || seekMentorship) && !phone.trim()) {
       setFormError("Add a phone number to join the mentoring directory.");
+      setFormSuccess("");
       return;
     }
     setFormError("");
-    const updated = updateCurrentUser({
-      name: name.trim(),
-      phone: phone.trim(),
-      photo,
-      batch: batch.trim(),
-      department: department.trim(),
-      college: college.trim(),
-      hostel: hostel.trim(),
-      company: company.trim(),
-      offerMentorship,
-      seekMentorship,
-    });
-    if (updated) {
+    setFormSuccess("");
+    try {
+      const updated = updateCurrentUser({
+        name: name.trim(),
+        phone: phone.trim(),
+        photo,
+        batch: batch.trim(),
+        department: department.trim(),
+        college: college.trim(),
+        hostel: hostel.trim(),
+        company: company.trim(),
+        offerMentorship,
+        seekMentorship,
+      });
+      if (!updated) {
+        setFormError("Your profile could not be saved. Please log in again and retry.");
+        return;
+      }
       setUser(updated);
-      upsertMentorshipProfile(updated);
+      try {
+        upsertMentorshipProfile(updated);
+      } catch (error) {
+        console.error("Profile saved, but mentorship directory update failed:", error);
+        setFormError("Your profile was saved, but the mentoring directory could not be updated. Please try again.");
+      }
+      setFormSuccess("Your profile has been saved.");
       setEditing(false);
+    } catch (error) {
+      console.error("Unable to save profile:", error);
+      setFormError("Unable to save. Your browser storage may be full; try using a smaller profile photo.");
     }
   };
 
@@ -126,6 +142,10 @@ export default function ProfilePage() {
               </span>
             )}
           </div>
+        )}
+
+        {formSuccess && !editing && (
+          <p role="status" className="mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{formSuccess}</p>
         )}
 
         {editing ? (
@@ -282,7 +302,7 @@ export default function ProfilePage() {
                 <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wide">Details</h3>
                 <button
                   type="button"
-                  onClick={() => setEditing(true)}
+                  onClick={() => { setFormSuccess(""); setFormError(""); setEditing(true); }}
                   className="text-sm text-blue-600 font-medium"
                 >
                   Edit
