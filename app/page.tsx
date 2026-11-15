@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   CalendarDays, BriefcaseBusiness, GraduationCap, HandHeart, BookOpen,
   Image as ImageIcon, Video, FileText, MoreHorizontal, MessageCircle,
-  ArrowRight, Megaphone, Users, Sparkles, ThumbsUp, Send, Trash2
+  ArrowRight, Megaphone, Users, ThumbsUp, Send, Trash2
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { EventCard } from "@/components/EventCard";
@@ -125,7 +125,6 @@ export default function HomePage() {
             <h1>Welcome back, {user.name.split(" ")[0]}!</h1>
             <p>{user.role === "admin" ? "College Admin" : `Class of ${user.batch || "—"}`} · {institutionConfig.tagline}</p>
           </div>
-          <Sparkles size={28} aria-hidden="true" />
         </section>
 
         <section className="composer-card" aria-label="Create a community post">
