@@ -1,100 +1,29 @@
 "use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { loginAs, type Role } from "@/lib/auth";
-import { institutionConfig } from "@/lib/config";
-
-export default function LoginPage() {
-  const router = useRouter();
-  const [role, setRole] = useState<Role>("alumni");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !email.trim()) return;
-    loginAs(role, name.trim(), email.trim());
-    router.push("/");
-    router.refresh();
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-3">
-            {institutionConfig.shortName}
-          </div>
-          <h1 className="text-xl font-semibold text-slate-900">{institutionConfig.name}</h1>
-          <p className="text-sm text-slate-500 mt-1">{institutionConfig.tagline}</p>
-        </div>
-
-        <form onSubmit={handleLogin} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">I am a</label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setRole("alumni")}
-                className={`py-2.5 rounded-xl text-sm font-medium border transition ${
-                  role === "alumni"
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white text-slate-600 border-slate-200"
-                }`}
-              >
-                Alumni / Student
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole("admin")}
-                className={`py-2.5 rounded-xl text-sm font-medium border transition ${
-                  role === "admin"
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white text-slate-600 border-slate-200"
-                }`}
-              >
-                College Admin
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 rounded-xl bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition"
-          >
-            Continue
-          </button>
-
-          <p className="text-xs text-center text-slate-400">
-            Simple demo login. No password required.
-          </p>
-        </form>
-      </div>
-    </div>
-  );
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {getPendingRegistrations,loginAdmin,loginApprovedUser,submitRegistrationRequest} from "@/lib/auth";
+import {institutionConfig} from "@/lib/config";
+type Mode="alumni"|"admin"|"register";
+export default function LoginPage(){
+ const router=useRouter();const[mode,setMode]=useState<Mode>("alumni");const[name,setName]=useState("");const[phone,setPhone]=useState("");const[batch,setBatch]=useState("");const[department,setDepartment]=useState("");const[rollNumber,setRollNumber]=useState("");const[otp,setOtp]=useState("");const[message,setMessage]=useState("");const[success,setSuccess]=useState(false);
+ const reset=()=>{setMessage("");setSuccess(false)};
+ const login=(e:React.FormEvent)=>{e.preventDefault();reset();if(!otp.trim()){setMessage("OTP is a placeholder and is not sent yet. Enter any code to preview the approved-user login.");return}const user=loginApprovedUser(phone);if(!user){const pending=getPendingRegistrations().some(r=>r.phone.replace(/\\D/g,"")===phone.replace(/\\D/g,""));setMessage(pending?"Your registration is awaiting administrator approval.":"No approved account found. Please register first.");return}router.push("/");router.refresh()};
+ const adminLogin=(e:React.FormEvent)=>{e.preventDefault();reset();if(!loginAdmin(phone)){setMessage("This number is not on the application owner's admin allowlist.");return}router.push("/admin");router.refresh()};
+ const register=(e:React.FormEvent)=>{e.preventDefault();reset();const clean=phone.replace(/\\D/g,"");if(!/^\\d{10}$/.test(clean)){setMessage("Enter a valid 10-digit mobile number.");return}const result=submitRegistrationRequest({name:name.trim(),phone:clean,batch:batch.trim(),department:department.trim(),rollNumber:rollNumber.trim()});if(!result.ok){setMessage(result.message);return}setSuccess(true);setMessage("Registration request submitted. You can log in after an administrator approves it.");setMode("alumni")};
+ const field="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500",label="block text-sm font-medium text-slate-700 mb-1";
+ return <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-8"><div className="w-full max-w-sm">
+ <div className="text-center mb-7"><div className="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-3">{institutionConfig.shortName}</div><h1 className="text-xl font-semibold text-slate-900">{institutionConfig.name}</h1><p className="text-sm text-slate-500 mt-1">{institutionConfig.tagline}</p></div>
+ <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
+ <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1">{(["alumni","register","admin"] as Mode[]).map(m=><button key={m} type="button" onClick={()=>{setMode(m);reset()}} className={`rounded-lg py-2 text-xs font-semibold ${mode===m?"bg-white text-indigo-700 shadow-sm":"text-slate-500"}`}>{m==="alumni"?"Alumni login":m==="register"?"New user":"Admin"}</button>)}</div>
+ {mode==="register"&&<form onSubmit={register} className="space-y-3">
+ <div><label className={label}>Full name</label><input className={field} value={name} onChange={e=>setName(e.target.value)} placeholder="Your full name" required/></div>
+ <div><label className={label}>Phone number</label><input className={field} type="tel" inputMode="numeric" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="10-digit mobile number" required/></div>
+ <div><label className={label}>Year of passing</label><input className={field} inputMode="numeric" value={batch} onChange={e=>setBatch(e.target.value)} placeholder="e.g. 2018" required/></div>
+ <div><label className={label}>Branch</label><input className={field} value={department} onChange={e=>setDepartment(e.target.value)} placeholder="e.g. Computer Science" required/></div>
+ <div><label className={label}>Roll number</label><input className={field} value={rollNumber} onChange={e=>setRollNumber(e.target.value)} placeholder="College roll number" required/></div>
+ <button className="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm">Submit registration request</button></form>}
+ {mode==="alumni"&&<form onSubmit={login} className="space-y-3"><div><label className={label}>Registered phone number</label><input className={field} type="tel" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="Registered mobile number" required/></div><div><label className={label}>OTP</label><input className={field} inputMode="numeric" value={otp} onChange={e=>setOtp(e.target.value)} placeholder="OTP placeholder (not sent)" required/></div><button className="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm">Continue</button><p className="text-xs text-center text-amber-700">Demo only: no OTP is sent or verified. Only approved accounts can proceed.</p></form>}
+ {mode==="admin"&&<form onSubmit={adminLogin} className="space-y-3"><div><label className={label}>Approved admin phone number</label><input className={field} type="tel" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="Admin phone number" required/></div><button className="w-full py-3 rounded-xl bg-slate-900 text-white font-semibold text-sm">Admin login</button><p className="text-xs text-center text-slate-500">Restricted to phone numbers configured by the application owner.</p></form>}
+ {message&&<p role={success?"status":"alert"} className={`rounded-lg px-3 py-2 text-sm ${success?"bg-emerald-50 text-emerald-700":"bg-amber-50 text-amber-800"}`}>{message}</p>}
+ <p className="text-[11px] text-center text-slate-400">Prototype flow. Real OTP and secure server-side approvals will be added with the backend.</p></div></div></div>
 }
