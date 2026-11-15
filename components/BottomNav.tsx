@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, Calendar, Heart, User, GraduationCap } from "lucide-react";
+import { Home, Users, Calendar, HandCoins, User, GraduationCap } from "lucide-react";
 import clsx from "clsx";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/network", label: "Network", icon: Users },
   { href: "/events", label: "Events", icon: Calendar },
-  { href: "/contribute", label: "Contribute", icon: Heart },
+  { href: "/contribute", label: "Contribute", icon: HandCoins },
   { href: "/mentoring", label: "Mentoring", icon: GraduationCap },
   { href: "/profile", label: "Profile", icon: User },
 ];
