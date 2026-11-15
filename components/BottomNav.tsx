@@ -10,8 +10,8 @@ const navItems = [
   { href: "/network", label: "Network", icon: Users },
   { href: "/events", label: "Events", icon: Calendar },
   { href: "/contribute", label: "Contribute", icon: Heart },
-  { href: "/profile", label: "Profile", icon: User },
   { href: "/mentoring", label: "Mentoring", icon: GraduationCap },
+  { href: "/profile", label: "Profile", icon: User },
 ];
 
 export function BottomNav() {
