@@ -29,7 +29,7 @@ export function Header({ title, showBack = false }: { title?: string; showBack?:
           </Link>
         ) : (
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-sky-200 flex items-center justify-center text-sky-950 font-bold text-sm shrink-0">
               {institutionConfig.shortName}
             </div>
             <span className="font-semibold text-slate-800 truncate">{institutionConfig.name}</span>
@@ -42,7 +42,7 @@ export function Header({ title, showBack = false }: { title?: string; showBack?:
           <button
             type="button"
             onClick={handleLogout}
-            className="text-xs sm:text-sm font-medium text-blue-700 border border-blue-200 rounded-lg px-2.5 py-1.5 hover:bg-blue-50 transition"
+            className="text-xs sm:text-sm font-medium text-sky-900 border border-sky-200 rounded-lg px-2.5 py-1.5 hover:bg-sky-50 transition"
             aria-label="Log out"
           >
             Logout
