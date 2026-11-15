@@ -5,7 +5,7 @@ export type RegistrationRequest = { id:string; name:string; phone:string; batch:
 const STORAGE_KEY="alumniforge_user", USERS_KEY="alumniforge_users", PENDING_KEY="alumniforge_pending_registrations";
 // Owner-managed allowlist. Add up to two more approved admin numbers here.
 export const ADMIN_PHONE_ALLOWLIST=["1234"];
-const norm=(value:string)=>value.replace(/\\D/g,"");
+const norm=(value:string)=>value.replace(/\D/g,"");
 function getSavedUsers():User[]{if(typeof window==="undefined")return[];try{return JSON.parse(localStorage.getItem(USERS_KEY)||"[]") as User[]}catch{return[]}}
 function saveUsers(users:User[]){localStorage.setItem(USERS_KEY,JSON.stringify(users))}
 function rememberUser(user:User){const phone=norm(user.phone||"");saveUsers([...getSavedUsers().filter(u=>norm(u.phone||"")!==phone),user])}
