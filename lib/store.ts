@@ -1,3 +1,5 @@
+import { getCurrentUser } from "./auth";
+
 // Simple client-side data store using localStorage
 
 import { posts as seedPosts, events as seedEvents } from "./data";
@@ -73,6 +75,7 @@ export function getEvents(): EventItem[] {
 
 export function addEvent(event: Omit<EventItem, "id" | "attendees">) {
   const events = getEvents();
+  if (getCurrentUser()?.role !== "admin") return events;
   const newEvent: EventItem = {
     ...event,
     id: Date.now().toString(),
@@ -176,6 +179,7 @@ const OPPORTUNITIES_KEY = "alumniforge_opportunities";
 export function getOpportunities(): OpportunityItem[] { return load(OPPORTUNITIES_KEY, []); }
 export function addOpportunity(item: Omit<OpportunityItem, "id" | "createdAt">): OpportunityItem[] {
   const items = getOpportunities();
+  if (getCurrentUser()?.role !== "admin") return items;
   const next: OpportunityItem = { ...item, id: Date.now().toString(), createdAt: new Date().toISOString() };
   const updated = [next, ...items]; save(OPPORTUNITIES_KEY, updated); return updated;
 }
