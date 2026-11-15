@@ -69,7 +69,7 @@ export default function MentoringPage() {
                   <p className="text-sm text-slate-600">{[person.batch && `Class of ${person.batch}`, person.department, person.college].filter(Boolean).join(" · ") || "Alumni"}</p>
                   {person.company && <p className="text-sm text-slate-500 mt-0.5">{person.company}</p>}
                   {person.phone ? (
-                    <a href={`tel:${person.phone.replace(/[^+\\d]/g, "")}`} className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-blue-700"><Phone size={15} />{person.phone}</a>
+                    <a href={`tel:${person.phone.replace(/[^+\d]/g, "")}`} className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-blue-700"><Phone size={15} />{person.phone}</a>
                   ) : (
                     <p className="mt-2 text-xs text-slate-400">Phone number not provided</p>
                   )}
