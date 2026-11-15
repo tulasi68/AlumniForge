@@ -189,7 +189,7 @@ export default function ContributePage() {
 
         {/* Payment placeholder modal */}
         {selectedCampaign && (
-          <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4 pb-24 sm:pb-4">
             <div className="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4">
               <h3 className="font-semibold text-slate-900">Contribute</h3>
               <p className="text-sm text-slate-600">{selectedCampaign.title}</p>
