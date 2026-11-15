@@ -78,12 +78,12 @@ export default function ContributePage() {
       <Header title="Contribute" />
 
       <main className="px-4 py-4 space-y-6">
-        <div className="bg-gradient-to-r from-rose-500 to-pink-600 rounded-2xl p-5 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-5 text-white">
           <div className="flex items-center gap-2 mb-2">
             <Heart size={22} fill="currentColor" />
             <h2 className="text-lg font-semibold">Give Back</h2>
           </div>
-          <p className="text-rose-100 text-sm leading-relaxed">
+          <p className="text-blue-100 text-sm leading-relaxed">
             Your contribution helps current students and strengthens the alumni community.
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function ContributePage() {
             <button
               type="button"
               onClick={() => setShowForm(!showForm)}
-              className="w-full py-2.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 text-sm font-medium"
+              className="w-full py-2.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-sm font-medium"
             >
               {showForm ? "Cancel" : "+ Add a new campaign"}
             </button>
@@ -105,27 +105,27 @@ export default function ContributePage() {
                   placeholder="Campaign title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <textarea
                   placeholder="Description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={2}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 resize-none"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
                 <input
                   type="number"
                   placeholder="Goal amount (INR)"
                   value={goal}
                   onChange={(e) => setGoal(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <ImagePicker value={image} onChange={setImage} />
                 <button
                   type="button"
                   onClick={handleCreateCampaign}
-                  className="w-full py-2.5 rounded-xl bg-rose-500 text-white text-sm font-medium hover:bg-rose-600 transition"
+                  className="w-full py-2.5 rounded-xl bg-blue-500 text-white text-sm font-medium hover:bg-blue-700 transition"
                 >
                   Create Campaign
                 </button>
@@ -164,7 +164,7 @@ export default function ContributePage() {
                       </div>
                       <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-rose-500 rounded-full"
+                          className="h-full bg-blue-500 rounded-full"
                           style={{ width: `${percent}%` }}
                         />
                       </div>
@@ -176,7 +176,7 @@ export default function ContributePage() {
                     <button
                       type="button"
                       onClick={() => setSelectedCampaign(campaign)}
-                      className="mt-4 w-full py-2.5 rounded-xl bg-rose-500 text-white text-sm font-medium hover:bg-rose-600 transition"
+                      className="mt-4 w-full py-2.5 rounded-xl bg-blue-500 text-white text-sm font-medium hover:bg-blue-700 transition"
                     >
                       Contribute Now
                     </button>
@@ -201,7 +201,7 @@ export default function ContributePage() {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="e.g. 1000"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -236,7 +236,7 @@ export default function ContributePage() {
                 <button
                   type="button"
                   onClick={handlePay}
-                  className="flex-1 py-2.5 rounded-xl bg-rose-500 text-white text-sm font-medium"
+                  className="flex-1 py-2.5 rounded-xl bg-blue-500 text-white text-sm font-medium"
                 >
                   Pay Now
                 </button>
