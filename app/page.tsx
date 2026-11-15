@@ -6,14 +6,14 @@ import { useRouter } from "next/navigation";
 import {
   CalendarDays, BriefcaseBusiness, GraduationCap, HandHeart, BookOpen,
   Image as ImageIcon, Video, FileText, MoreHorizontal, MessageCircle,
-  ArrowRight, Megaphone, Users, Sparkles
+  ArrowRight, Megaphone, Users, Sparkles, ThumbsUp, Send, Trash2
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { EventCard } from "@/components/EventCard";
 import { ImagePicker } from "@/components/ImagePicker";
 import { institutionConfig } from "@/lib/config";
 import { getCurrentUser } from "@/lib/auth";
-import { getPosts, addPost, getEvents, type Post } from "@/lib/store";
+import { getPosts, addPost, getEvents, addPostComment, togglePostReaction, deletePost, type Post } from "@/lib/store";
 
 const quickLinks = [
   { label: "Story", href: "/network", icon: BookOpen },
@@ -33,6 +33,7 @@ export default function HomePage() {
   const [postImage, setPostImage] = useState<string | null>(null);
   const [showComposer, setShowComposer] = useState(false);
   const [showPhotoPicker, setShowPhotoPicker] = useState(false);
+  const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const current = getCurrentUser();
@@ -44,6 +45,29 @@ export default function HomePage() {
     setPosts(getPosts());
     setEvents(getEvents());
   }, [router]);
+
+  const handleReact = (postId: string) => {
+    if (!user) return;
+    setPosts(togglePostReaction(postId, user.id));
+  };
+
+  const handleComment = (postId: string) => {
+    if (!user) return;
+    const content = (commentDrafts[postId] || "").trim();
+    if (!content) return;
+    setPosts(addPostComment(postId, {
+      authorId: user.id,
+      author: user.name,
+      content,
+    }));
+    setCommentDrafts((drafts) => ({ ...drafts, [postId]: "" }));
+  };
+
+  const handleDeletePost = (postId: string) => {
+    if (user?.role !== "admin") return;
+    if (!window.confirm("Delete this post for the community? This cannot be undone.")) return;
+    setPosts(deletePost(postId));
+  };
 
   const handleCreatePost = () => {
     if (!newPost.trim() || !user) return;
@@ -222,6 +246,49 @@ export default function HomePage() {
                     </div>
                   </div>
                   <p className="feed-message">{post.content}</p>
+                  <div className="post-interactions">
+                    <button
+                      type="button"
+                      onClick={() => handleReact(post.id)}
+                      className={`post-reaction ${(post.reactions || []).includes(user.id) ? "post-reaction-active" : ""}`}
+                      aria-pressed={(post.reactions || []).includes(user.id)}
+                    >
+                      <ThumbsUp size={16} />
+                      <span>{(post.reactions || []).includes(user.id) ? "Liked" : "Like"}</span>
+                      <span className="post-count">{(post.reactions || []).length}</span>
+                    </button>
+                    <span className="post-comment-count"><MessageCircle size={16} /> {(post.comments || []).length} comments</span>
+                    {user.role === "admin" && (
+                      <button type="button" className="post-delete-button" onClick={() => handleDeletePost(post.id)}>
+                        <Trash2 size={15} /> Delete
+                      </button>
+                    )}
+                  </div>
+                  {(post.comments || []).length > 0 && (
+                    <div className="post-comments">
+                      {(post.comments || []).map((comment) => (
+                        <div className="post-comment" key={comment.id}>
+                          <div className="post-comment-avatar">{comment.author.split(" ").map((part) => part[0]).join("").slice(0, 2)}</div>
+                          <div className="post-comment-body">
+                            <p className="post-comment-author">{comment.author} <span>{comment.time}</span></p>
+                            <p>{comment.content}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <form className="post-comment-form" onSubmit={(event) => { event.preventDefault(); handleComment(post.id); }}>
+                    <input
+                      type="text"
+                      value={commentDrafts[post.id] || ""}
+                      onChange={(event) => setCommentDrafts((drafts) => ({ ...drafts, [post.id]: event.target.value }))}
+                      placeholder="Write a comment..."
+                      aria-label={`Comment on post by ${post.author}`}
+                    />
+                    <button type="submit" disabled={!(commentDrafts[post.id] || "").trim()} aria-label="Send comment">
+                      <Send size={16} />
+                    </button>
+                  </form>
                 </div>
               </article>
             ))}
