@@ -3,7 +3,7 @@ export const institutionConfig = {
   name: "AlumniForge",
   shortName: "AF",
   tagline: "Connect. Grow. Give Back.",
-  primaryColor: "#2563eb", // blue-600
+  primaryColor: "#4f46e5", // AlumniForge indigo
   logoText: "AlumniForge",
 
   // Enable / disable modules
