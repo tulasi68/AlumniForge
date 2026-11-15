@@ -114,5 +114,20 @@ export function deleteUser(userId: string): User[] {
   if (admin?.role !== "admin" || admin.id === userId) return getSavedUsers();
   const remaining = getSavedUsers().filter((user) => user.id !== userId);
   localStorage.setItem(USERS_KEY, JSON.stringify(remaining));
+
+  // Remove related mentorship listing so a deleted demo account is not left visible.
+  try {
+    const mentorshipRaw = localStorage.getItem("alumniforge_mentorship_profiles");
+    if (mentorshipRaw) {
+      const profiles = JSON.parse(mentorshipRaw) as Array<{ id?: string }>;
+      localStorage.setItem(
+        "alumniforge_mentorship_profiles",
+        JSON.stringify(profiles.filter((profile) => profile.id !== userId))
+      );
+    }
+  } catch (error) {
+    console.error("Unable to clean up deleted user's mentorship profile:", error);
+  }
+
   return remaining;
 }
