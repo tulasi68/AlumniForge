@@ -10,8 +10,8 @@ import { getEvents, addEvent, getOpportunities, addOpportunity, type EventItem, 
 
 type Section = "events" | OpportunityCategory;
 const sections: { id: Section; label: string }[] = [
-  { id: "events", label: "Events" }, { id: "jobs", label: "Jobs" },
-  { id: "internship", label: "Internship" }, { id: "funding", label: "Funding" },
+  { id: "events", label: "Events" }, { id: "jobs", label: "Opportunities" },
+  { id: "internship", label: "Achievements" }, { id: "funding", label: "Funding" },
 ];
 
 export default function EventsPage() {
@@ -40,6 +40,7 @@ export default function EventsPage() {
 
   const isAdmin = user?.role === "admin";
   const activeLabel = sections.find((section) => section.id === activeSection)?.label ?? "Events";
+  const publishLabel = activeSection === "jobs" ? "Opportunity" : activeSection === "internship" ? "Achievement" : activeLabel;
   const visibleOpportunities = useMemo(
     () => opportunities.filter((item) => item.category === activeSection),
     [opportunities, activeSection]
@@ -88,7 +89,7 @@ export default function EventsPage() {
             <p className="text-xs text-slate-500 mt-0.5">
               {activeSection === "events" ? "Reunions, meetups and alumni gatherings" :
                activeSection === "jobs" ? "Career opportunities shared with the alumni community" :
-               activeSection === "internship" ? "Internship opportunities for students and recent graduates" :
+               activeSection === "internship" ? "Alumni achievements, milestones and recognition" :
                "Scholarships, grants and funding opportunities"}
             </p>
           </div>
@@ -100,7 +101,7 @@ export default function EventsPage() {
 
         {showForm && isAdmin && <div className="mb-5 rounded-2xl border border-sky-100 bg-sky-50/70 p-4 space-y-3">
           <h3 className="font-semibold text-slate-900">Add {activeSection === "events" ? "event" : activeLabel.toLowerCase()}</h3>
-          <input type="text" placeholder={activeSection === "events" ? "Event title" : "Title / role / programme"} value={title} onChange={(e) => setTitle(e.target.value)}
+          <input type="text" placeholder={activeSection === "events" ? "Event title" : activeSection === "internship" ? "Achievement title" : "Title / role / programme"} value={title} onChange={(e) => setTitle(e.target.value)}
             className="w-full rounded-lg border border-sky-100 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-sky-200" />
           {activeSection === "events" ? <>
             <div className="grid grid-cols-2 gap-2">
@@ -113,16 +114,16 @@ export default function EventsPage() {
             </select>
             <ImagePicker value={image} onChange={setImage} />
           </> : <>
-            <input type="text" placeholder="Company / institution / funding body" value={organization} onChange={(e) => setOrganization(e.target.value)} className="w-full rounded-lg border border-sky-100 bg-white px-3 py-2.5 text-sm" />
-            <textarea placeholder="Description and eligibility details" value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="w-full rounded-lg border border-sky-100 bg-white px-3 py-2.5 text-sm" />
+            <input type="text" placeholder={activeSection === "internship" ? "Alumnus / alumna or organisation (optional)" : "Company / institution / funding body"} value={organization} onChange={(e) => setOrganization(e.target.value)} className="w-full rounded-lg border border-sky-100 bg-white px-3 py-2.5 text-sm" />
+            <textarea placeholder={activeSection === "internship" ? "Describe the achievement, recognition, milestone or contribution" : "Description and eligibility details"} value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="w-full rounded-lg border border-sky-100 bg-white px-3 py-2.5 text-sm" />
             <input type="text" placeholder="Location (optional)" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full rounded-lg border border-sky-100 bg-white px-3 py-2.5 text-sm" />
-            <input type="url" placeholder="Application / details URL (optional)" value={link} onChange={(e) => setLink(e.target.value)} className="w-full rounded-lg border border-sky-100 bg-white px-3 py-2.5 text-sm" />
-            <label className="block text-xs font-medium text-slate-600">Application deadline (optional)
+            <input type="url" placeholder={activeSection === "internship" ? "Story / article URL (optional)" : "Application / details URL (optional)"} value={link} onChange={(e) => setLink(e.target.value)} className="w-full rounded-lg border border-sky-100 bg-white px-3 py-2.5 text-sm" />
+            {activeSection !== "internship" && <label className="block text-xs font-medium text-slate-600">Application deadline (optional)
               <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="mt-1 w-full rounded-lg border border-sky-100 bg-white px-3 py-2.5 text-sm" />
-            </label>
+            </label>}
           </>}
           <button type="button" onClick={handleCreate} className="w-full rounded-xl bg-sky-200 py-2.5 text-sm font-semibold text-sky-950 hover:bg-sky-300 transition">
-            Publish {activeSection === "events" ? "Event" : activeLabel.slice(0, -1)}
+            Publish {activeSection === "events" ? "Event" : publishLabel}
           </button>
           <p className="text-xs text-slate-500">Only an administrator can publish items in these sections.</p>
         </div>}
@@ -135,7 +136,7 @@ export default function EventsPage() {
           {events.length === 0 && <EmptyState label="No events have been posted yet." />}
         </div> : <div className="space-y-3">
           {visibleOpportunities.map((item) => <OpportunityCard key={item.id} item={item} />)}
-          {visibleOpportunities.length === 0 && <EmptyState label={"No " + activeLabel.toLowerCase() + " have been posted yet."} />}
+          {visibleOpportunities.length === 0 && <EmptyState label={activeSection === "internship" ? "No achievements have been posted yet." : "No " + activeLabel.toLowerCase() + " have been posted yet."} />}
         </div>}
       </main>
     </>
@@ -147,10 +148,11 @@ function EmptyState({ label }: { label: string }) {
 }
 
 function OpportunityCard({ item }: { item: OpportunityItem }) {
+  const categoryLabel = item.category === "jobs" ? "Opportunity" : item.category === "internship" ? "Achievement" : "Funding";
   return <article className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
     <div className="flex items-start justify-between gap-3">
       <h3 className="font-semibold leading-snug text-slate-900">{item.title}</h3>
-      <span className="shrink-0 rounded-full bg-sky-100 px-2.5 py-1 text-xs font-medium capitalize text-sky-900">{item.category}</span>
+      <span className="shrink-0 rounded-full bg-sky-100 px-2.5 py-1 text-xs font-medium text-sky-900">{categoryLabel}</span>
     </div>
     {item.organization && <p className="mt-1 text-sm font-medium text-sky-800">{item.organization}</p>}
     <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-slate-600">{item.description}</p>
