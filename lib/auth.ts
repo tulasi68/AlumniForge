@@ -19,6 +19,23 @@ export type User = {
 };
 
 const STORAGE_KEY = "alumniforge_user";
+const USERS_KEY = "alumniforge_users";
+
+function getSavedUsers(): User[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(USERS_KEY);
+    return raw ? (JSON.parse(raw) as User[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function rememberUser(user: User) {
+  const users = getSavedUsers().filter((saved) => saved.email.toLowerCase() !== user.email.toLowerCase());
+  users.push(user);
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
 
 export function getCurrentUser(): User | null {
   if (typeof window === "undefined") return null;
@@ -32,10 +49,19 @@ export function getCurrentUser(): User | null {
 
 export function setCurrentUser(user: User | null) {
   if (typeof window === "undefined") return;
-  if (user) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-  } else {
-    localStorage.removeItem(STORAGE_KEY);
+  try {
+    if (user) {
+      // Keep a profile record by email so demo logins on this browser restore edits.
+      rememberUser(user);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    } else {
+      const current = getCurrentUser();
+      if (current) rememberUser(current);
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  } catch (error) {
+    console.error("Unable to save AlumniForge profile:", error);
+    throw error;
   }
 }
 
@@ -48,19 +74,29 @@ export function updateCurrentUser(updates: Partial<User>) {
 }
 
 export function loginAs(role: Role, name: string, email: string): User {
-  const user: User = {
-    id: Date.now().toString(),
-    name,
-    email,
-    role,
-    batch: role === "alumni" ? "2018" : undefined,
-    department: role === "alumni" ? "Computer Science" : undefined,
-    college: "",
-    hostel: "",
-    company: "",
-    offerMentorship: false,
-    seekMentorship: false,
-  };
+  const normalizedEmail = email.trim().toLowerCase();
+  const existing = getSavedUsers().find((saved) => saved.email.toLowerCase() === normalizedEmail)
+    || (() => {
+      const current = getCurrentUser();
+      return current?.email.toLowerCase() === normalizedEmail ? current : undefined;
+    })();
+
+  // Reuse the saved profile for returning demo users instead of recreating blank details.
+  const user: User = existing
+    ? { ...existing, name: existing.name || name, email: normalizedEmail, role }
+    : {
+        id: Date.now().toString(),
+        name,
+        email: normalizedEmail,
+        role,
+        batch: role === "alumni" ? "2018" : undefined,
+        department: role === "alumni" ? "Computer Science" : undefined,
+        college: "",
+        hostel: "",
+        company: "",
+        offerMentorship: false,
+        seekMentorship: false,
+      };
   setCurrentUser(user);
   return user;
 }
