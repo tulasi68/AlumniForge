@@ -16,8 +16,8 @@ const navItems = [
 export function BottomNav() {
   const pathname = usePathname();
 
-  // Hide nav on admin page
-  if (pathname?.startsWith("/admin")) return null;
+  // Hide nav on login and admin pages
+  if (pathname?.startsWith("/login") || pathname?.startsWith("/admin")) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white pb-safe">

@@ -1,13 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { AlumniCard } from "@/components/AlumniCard";
 import { alumni } from "@/lib/data";
+import { getCurrentUser } from "@/lib/auth";
 import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function NetworkPage() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const u = getCurrentUser();
+    if (!u) {
+      router.replace("/login");
+      return;
+    }
+    setReady(true);
+  }, [router]);
 
   const filtered = alumni.filter((person) => {
     const q = query.toLowerCase();
@@ -20,12 +33,19 @@ export default function NetworkPage() {
     );
   });
 
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <>
       <Header title="Network" />
 
       <main className="px-4 py-4">
-        {/* Search */}
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
@@ -37,9 +57,7 @@ export default function NetworkPage() {
           />
         </div>
 
-        <p className="text-sm text-slate-500 mb-3">
-          {filtered.length} alumni found
-        </p>
+        <p className="text-sm text-slate-500 mb-3">{filtered.length} alumni found</p>
 
         <div className="space-y-3">
           {filtered.map((person) => (
