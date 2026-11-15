@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   CalendarDays, BriefcaseBusiness, GraduationCap, HandHeart, BookOpen,
-  Image as ImageIcon, Video, FileText, MoreHorizontal, MessageCircle,
+  Image as ImageIcon, MessageCircle,
   ArrowRight, Megaphone, Users, ThumbsUp, Send, Trash2
 } from "lucide-react";
 import { Header } from "@/components/Header";
@@ -153,8 +153,6 @@ export default function HomePage() {
                 <button type="button" onClick={() => setShowPhotoPicker((open) => !open)} className="composer-action photo-action">
                   <ImageIcon size={19} /> Photo
                 </button>
-                <span className="composer-action muted-action" title="Video sharing is coming soon"><Video size={19} /> Video</span>
-                <span className="composer-action file-action" title="File sharing is coming soon"><FileText size={19} /> File</span>
                 <button type="button" className="publish-button" onClick={handleCreatePost} disabled={!newPost.trim()}>
                   Share
                 </button>
@@ -164,9 +162,6 @@ export default function HomePage() {
           {!showComposer && (
             <div className="composer-shortcuts">
               <button type="button" onClick={() => { setShowComposer(true); setShowPhotoPicker(true); }}><ImageIcon size={19} /> Photo</button>
-              <span><Video size={19} /> Video</span>
-              <span><FileText size={19} /> File</span>
-              <span className="more-shortcut"><MoreHorizontal size={19} /> More</span>
             </div>
           )}
         </section>
