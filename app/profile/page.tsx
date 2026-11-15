@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
+import { ImagePicker } from "@/components/ImagePicker";
 import { getCurrentUser, updateCurrentUser, logout, type User } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { upsertMentorshipProfile } from "@/lib/store";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -13,6 +15,8 @@ export default function ProfilePage() {
 
   // Form fields
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [photo, setPhoto] = useState<string | null>(null);
   const [batch, setBatch] = useState("");
   const [department, setDepartment] = useState("");
   const [college, setCollege] = useState("");
@@ -29,6 +33,8 @@ export default function ProfilePage() {
     }
     setUser(u);
     setName(u.name || "");
+    setPhone(u.phone || "");
+    setPhoto(u.photo || null);
     setBatch(u.batch || "");
     setDepartment(u.department || "");
     setCollege(u.college || "");
@@ -41,6 +47,8 @@ export default function ProfilePage() {
   const handleSave = () => {
     const updated = updateCurrentUser({
       name: name.trim(),
+      phone: phone.trim(),
+      photo,
       batch: batch.trim(),
       department: department.trim(),
       college: college.trim(),
@@ -51,6 +59,7 @@ export default function ProfilePage() {
     });
     if (updated) {
       setUser(updated);
+      upsertMentorshipProfile(updated);
       setEditing(false);
     }
   };
@@ -82,8 +91,8 @@ export default function ProfilePage() {
       <main className="px-4 py-6">
         {/* Avatar */}
         <div className="flex flex-col items-center mb-6">
-          <div className="w-24 h-24 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-3xl font-bold mb-3">
-            {initials}
+          <div className="w-24 h-24 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-3xl font-bold mb-3 overflow-hidden border border-slate-200">
+            {user.photo ? <img src={user.photo} alt={`${user.name} profile`} className="w-full h-full object-cover" /> : initials}
           </div>
           {!editing && (
             <>
@@ -118,6 +127,11 @@ export default function ProfilePage() {
           <div className="space-y-4">
             <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
               <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wide">Basic Info</h3>
+              <div>
+                <label className="block text-sm font-medium text-slate-600 mb-2">Profile Photo</label>
+                <ImagePicker value={photo} onChange={setPhoto} label="Add profile photo" />
+                <p className="text-xs text-slate-400 mt-1">Choose a clear photo so fellow alumni can recognise you.</p>
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1">Full Name</label>
@@ -127,6 +141,12 @@ export default function ProfilePage() {
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-600 mb-1">Phone Number</label>
+                <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="e.g. +91 98765 43210" className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <p className="text-xs text-slate-400 mt-1">Shown in the mentoring directory when you opt in.</p>
               </div>
 
               <div>
@@ -293,6 +313,7 @@ export default function ProfilePage() {
             <div className="bg-white rounded-xl border border-slate-200 p-4">
               <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Contact</h3>
               <p className="text-sm text-slate-700">{user.email}</p>
+              {user.phone && <p className="text-sm text-slate-700 mt-1">{user.phone}</p>}
             </div>
 
             {user.role === "admin" && (
